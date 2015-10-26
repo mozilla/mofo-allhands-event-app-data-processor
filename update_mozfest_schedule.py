@@ -137,13 +137,25 @@ def transform_data(data):
     to publish. Currently, this:
     
     * ensures that all variables going into the JSON are strings
+    * transforms column name `githubIssueNumber` into JSON key `id`
+    * removes any rows that don't have an `id`
     '''
     def _transform_response_item(item):
+        # make sure vars are strings
         _transformed_item = {k: unicode(v) for k, v in item.iteritems()}
+        
+        # transform `githubIssueNumber` key into `id`
+        # (and skip rows without an id)
+        if 'githubIssueNumber' in _transformed_item:
+            _transformed_item['id'] = _transformed_item.pop('githubIssueNumber', '')
+
+            if not _transformed_item['id']:
+                _transformed_item = None
+        
         return _transformed_item
     
-    transformed_data = [_transform_response_item(item) for item in data]
-    
+    transformed_data = filter(None, [_transform_response_item(item) for item in data])
+
     return transformed_data
 
 def make_json(data, store_locally=False, filename=GITHUB_CONFIG['TARGET_FILE']):
