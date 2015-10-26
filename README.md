@@ -11,7 +11,7 @@ There are four methods chained together to perform these task(s).
 * `transform_data()`: passes each item in the Python dict through a filter,
     providing an opportunity to validate, transform, remove fields, etc.
   
-* `make_json(): converts the Python dict into a JSON array, and provides
+* `make_json()`: converts the Python dict into a JSON array, and provides
     an opportunity to store a local copy of the JSON (useful for testing).
   
 * `commit_json()`: authenticates with GitHub and commits a JSON file
