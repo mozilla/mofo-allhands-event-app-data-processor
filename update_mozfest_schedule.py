@@ -24,7 +24,7 @@ It can also be run from the command line: `python update_mozfest_schedule.py`
 ### Authentication
 For authentication to work, you must generate Google and GitHub credentials.
 These should be stored as environment variables, and *not* committed to the
-repository along with this.
+repository.
 
 * GitHub: Follow these instructions to create a person API token:
     https://github.com/blog/1509-personal-api-tokens
@@ -59,7 +59,9 @@ You should change the values in `GITHUB_CONFIG` according to your project.
 You should also change these values according to your project.
 
 * GOOGLE_SPREADSHEET_KEY: a string representing the unique ID of the Google
-    spreadsheet storing your data.
+    spreadsheet storing your data. This can be stored as an environment
+    variable called GOOGLE_SPREADSHEET_KEY for extra security, or can simply
+    be stored as a string in this script.
     
 * MAKE_LOCAL_JSON: should likely be set to `False` in production, but can
     be set to `True` for  testing. If set to `True`, the `make_json()` method
@@ -105,10 +107,13 @@ GOOGLE_API_CONFIG = {
     'PRIVATE_KEY': os.environ['GOOGLE_API_PRIVATE_KEY'].decode('unicode_escape'),
     'SCOPE': ['https://spreadsheets.google.com/feeds']
 }
-GOOGLE_SPREADSHEET_KEY = ''
 
-MAKE_LOCAL_JSON = True
-COMMIT_JSON_TO_GITHUB = False
+# can be stored as an environment variable if worried about security
+# or simply stored as string here 
+GOOGLE_SPREADSHEET_KEY = os.environ['GOOGLE_SPREADSHEET_KEY'] or ''
+
+MAKE_LOCAL_JSON = False
+COMMIT_JSON_TO_GITHUB = True
 
 def fetch_from_spreadsheet():
     '''
