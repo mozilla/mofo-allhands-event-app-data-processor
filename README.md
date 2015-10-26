@@ -62,7 +62,9 @@ You should change the values in `GITHUB_CONFIG` according to your project.
 You should also change these values according to your project.
 
 * GOOGLE_SPREADSHEET_KEY: a string representing the unique ID of the Google
-    spreadsheet storing your data.
+    spreadsheet storing your data. This can be stored as an environment
+    variable called GOOGLE_SPREADSHEET_KEY for extra security, or can simply
+    be stored as a string in this script.
     
 * MAKE_LOCAL_JSON: should likely be set to `False` in production, but can
     be set to `True` for  testing. If set to `True`, the `make_json()` method
