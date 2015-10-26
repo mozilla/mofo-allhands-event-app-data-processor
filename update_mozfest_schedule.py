@@ -142,7 +142,7 @@ def transform_data(data):
     '''
     def _transform_response_item(item):
         # make sure vars are strings
-        _transformed_item = {k: unicode(v) for k, v in item.iteritems()}
+        _transformed_item = {k: unicode(v) for k, v in item.iteritems() if k}
         
         # transform `githubIssueNumber` key into `id`
         # (and skip rows without an id)
