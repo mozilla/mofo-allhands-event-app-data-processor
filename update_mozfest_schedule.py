@@ -172,12 +172,17 @@ def transform_data(data):
     to publish. Currently, this:
     
     * ensures that all variables going into the JSON are strings
+    * removes `proposalSpreadsheetRowNumber` to make JSON smaller
     * transforms column name `githubIssueNumber` into JSON key `id`
     * removes any rows that don't have an `id`
     '''
     def _transform_response_item(item):
         # make sure vars are strings
         _transformed_item = {k: unicode(v) for k, v in item.iteritems() if k}
+        
+        # don't need `proposalSpreadsheetRowNumber` for schedule app
+        if 'proposalSpreadsheetRowNumber' in _transformed_item:
+            del _transformed_item['proposalSpreadsheetRowNumber']
         
         # transform `githubIssueNumber` key into `id`
         # (and skip rows without an id)
