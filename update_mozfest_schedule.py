@@ -108,26 +108,61 @@ GOOGLE_API_CONFIG = {
     'SCOPE': ['https://spreadsheets.google.com/feeds']
 }
 
-# can be stored as an environment variable if worried about security
-# or simply stored as string here 
+# can be stored as an environment variable if worried
+# about security or simply stored as string here 
 GOOGLE_SPREADSHEET_KEY = os.environ['GOOGLE_SPREADSHEET_KEY'] or ''
+
+FETCH_MULTIPLE_WORKSHEETS = True
+WORKSHEETS_TO_SKIP = ['Template', '(backup) original imported data']
 
 MAKE_LOCAL_JSON = False
 COMMIT_JSON_TO_GITHUB = True
 
-def fetch_from_spreadsheet():
+
+def authenticate_with_google():
     '''
-    Connect to Google Spreadsheet with gspread library and fetch schedule data.
+    Connect to Google Spreadsheet with gspread library.
     '''
     credentials = SignedJwtAssertionCredentials(
         GOOGLE_API_CONFIG['CLIENT_EMAIL'], GOOGLE_API_CONFIG['PRIVATE_KEY'], GOOGLE_API_CONFIG['SCOPE']
     )
     google_api_conn = gspread.authorize(credentials)
-
+    
+    return google_api_conn
+    
+def open_google_spreadsheet():
+    '''
+    Authenticate and return spreadsheet by `GOOGLE_SPREADSHEET_KEY`.
+    '''
+    google_api_conn = authenticate_with_google()
     spreadsheet = google_api_conn.open_by_key(GOOGLE_SPREADSHEET_KEY)
-    datasheet = spreadsheet.get_worksheet(0)
+    
+    return spreadsheet
 
-    data = datasheet.get_all_records(empty2zero=False)
+def fetch_from_worksheet():
+    '''
+    Return data from first worksheet in Google spreadsheet.
+    '''
+    spreadsheet = open_google_spreadsheet()
+    worksheet = spreadsheet.get_worksheet(0)
+    data = worksheet.get_all_records(empty2zero=False)
+
+    return data
+    
+def fetch_from_all_worksheets(worksheets_to_skip=[]):
+    '''
+    Return data from all worksheets in Google spreadsheet, optionally
+    skipping sheets identified by title in `WORKSHEETS_TO_SKIP`.
+    '''
+    spreadsheet = open_google_spreadsheet()
+    data = []
+    worksheet_list = [
+        sheet for sheet in spreadsheet.worksheets() if sheet.title not in WORKSHEETS_TO_SKIP
+    ]
+
+    for worksheet in worksheet_list:
+        worksheet.title
+        data.extend(worksheet.get_all_records(empty2zero=False))
 
     return data
 
@@ -212,7 +247,10 @@ def commit_json(data, target_config=GITHUB_CONFIG, commit=COMMIT_JSON_TO_GITHUB)
         )
 
 def update_schedule():
-    data = fetch_from_spreadsheet()
+    if FETCH_MULTIPLE_WORKSHEETS:
+        data = fetch_from_all_worksheets(worksheets_to_skip=WORKSHEETS_TO_SKIP)
+    else:
+        data = fetch_from_worksheet()
     #print 'Fetched the data ...'
 
     data = transform_data(data)
