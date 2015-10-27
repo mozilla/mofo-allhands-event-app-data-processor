@@ -186,10 +186,13 @@ def transform_data(data):
             del _transformed_item['proposalSpreadsheetRowNumber']
         
         # transform `name` column name into `title` key
-        # (and skip rows without a name)
+        # and skip rows that represent pathways, or have no name
         if 'name' in _transformed_item:
             _transformed_item['title'] = _transformed_item.pop('name', '')
             if not _transformed_item['title']:
+                skip = True
+            if _transformed_item['title'].lower().startswith('[path'):
+                print _transformed_item['title']
                 skip = True
         
         # transform `githubIssueNumber` column name into `id` key
