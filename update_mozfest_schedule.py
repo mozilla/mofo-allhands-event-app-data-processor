@@ -173,10 +173,11 @@ def transform_data(data):
     
     * ensures that all variables going into the JSON are strings
     * removes `proposalSpreadsheetRowNumber` to make JSON smaller
+    * transforms column name `name` into JSON key `title`
     * transforms column name `githubIssueNumber` into JSON key `id`
     * removes any rows that don't have a numeric `id`
     '''
-    def _transform_response_item(item):
+    def _transform_response_item(item, skip=False):
         # make sure vars are strings
         _transformed_item = {k: unicode(v) for k, v in item.iteritems() if k}
         
@@ -184,8 +185,15 @@ def transform_data(data):
         if 'proposalSpreadsheetRowNumber' in _transformed_item:
             del _transformed_item['proposalSpreadsheetRowNumber']
         
-        # transform `githubIssueNumber` key into `id`
-        # (and skip rows without an id)
+        # transform `name` column name into `title` key
+        # (and skip rows without a name)
+        if 'name' in _transformed_item:
+            _transformed_item['title'] = _transformed_item.pop('name', '')
+            if not _transformed_item['title']:
+                skip = True
+        
+        # transform `githubIssueNumber` column name into `id` key
+        # (and skip rows without a valid id)
         if 'githubIssueNumber' in _transformed_item:
             _transformed_item['id'] = _transformed_item.pop('githubIssueNumber', '')
 
@@ -193,8 +201,11 @@ def transform_data(data):
             try:
                 int(_transformed_item['id'])
             except:
-                _transformed_item = None
-        
+                skip = True
+
+        if skip:
+            _transformed_item = None
+            
         return _transformed_item
     
     transformed_data = filter(None, [_transform_response_item(item) for item in data])
