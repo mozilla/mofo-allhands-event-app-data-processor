@@ -176,6 +176,7 @@ def transform_data(data):
     * transforms column name `name` into JSON key `title`
     * transforms column name `githubIssueNumber` into JSON key `id`
     * removes any rows that don't have a numeric `id`
+    * creates a concatenated `facilitators` key
     '''
     def _transform_response_item(item, skip=False):
         # make sure vars are strings
@@ -192,7 +193,6 @@ def transform_data(data):
             if not _transformed_item['title']:
                 skip = True
             if _transformed_item['title'].lower().startswith('[path'):
-                print _transformed_item['title']
                 skip = True
         
         # transform `githubIssueNumber` column name into `id` key
@@ -205,6 +205,12 @@ def transform_data(data):
                 int(_transformed_item['id'])
             except:
                 skip = True
+
+        # create concatenated `facilitators` key for schedule list display
+        name_list = []
+        for facilitator in ['facilitator_1', 'facilitator_2', 'facilitator_3']:
+            name_list.append(_transformed_item[facilitator].split(",")[0])
+        _transformed_item['facilitators'] = ', '.join(filter(None, name_list))
 
         if skip:
             _transformed_item = None
