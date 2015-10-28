@@ -177,6 +177,8 @@ def transform_data(data):
     * transforms column name `githubIssueNumber` into JSON key `id`
     * removes any rows that don't have a numeric `id`
     * creates a concatenated `facilitators` key
+    * creates a `scheduleblock` key based on data in `time` column
+    * infers a `day` and `start` key based on data in `time` column
     '''
     def _transform_response_item(item, skip=False):
         # make sure vars are strings
@@ -207,11 +209,36 @@ def transform_data(data):
                 skip = True
 
         # create concatenated `facilitators` key for schedule list display
+        # and `facilitator_array` key for session detail display
         name_list = []
-        for facilitator in ['facilitator_1', 'facilitator_2', 'facilitator_3']:
-            name_list.append(_transformed_item[facilitator].split(",")[0])
+        name_detail_list = []
+        for key in _transformed_item.keys():
+            if key.startswith('facilitator_'):
+                name_list.append(_transformed_item[key].split(",")[0])
+                name_detail_list.append(_transformed_item.pop(key))
         _transformed_item['facilitators'] = ', '.join(filter(None, name_list))
+        _transformed_item['facilitator_array'] = filter(None, name_detail_list)
 
+        # create `scheduleblock` key based on `time`
+        time_data = _transformed_item.pop('time', '').split('(')
+        # "slugified" version of scheduleblock
+        scheduleblock = time_data[0].strip()
+        scheduleblock = scheduleblock.lower().replace(' ','-')
+        _transformed_item['scheduleblock'] = scheduleblock
+        # infer session day
+        if 'saturday' in _transformed_item['scheduleblock']:
+            _transformed_item['day'] = 'Saturday'
+        if 'sunday' in _transformed_item['scheduleblock']:
+            _transformed_item['day'] = 'Sunday'
+        if 'weekend' in _transformed_item['scheduleblock']:
+            # TODO
+            #_transformed_item['day'] = 'Saturday'
+            pass
+        # infer start time
+        if len(time_data) > 1:
+            _transformed_item['start'] = time_data[1].strip('()').split(' ')[0]
+        
+        # if we've triggered the skip flag anywhere, drop this record
         if skip:
             _transformed_item = None
             
