@@ -91,8 +91,9 @@ import io
 import json
 import os
 import requests
-
+from datetime import datetime
 from oauth2client.client import SignedJwtAssertionCredentials
+
 
 GITHUB_CONFIG = {
     'TOKEN': os.environ['GITHUB_TOKEN'],
@@ -207,7 +208,7 @@ def transform_data(data):
                 int(_transformed_item['id'])
             except:
                 skip = True
-
+        
         # create concatenated `facilitators` key for schedule list display
         # and `facilitator_array` key for session detail display
         name_list = []
@@ -236,7 +237,14 @@ def transform_data(data):
             pass
         # infer start time
         if len(time_data) > 1:
-            _transformed_item['start'] = time_data[1].strip('()').split(' ')[0]
+            start_time = time_data[1].strip('()').split(' ')[0]
+            try:
+                # attempt to coerce to 12-hour format
+                d = datetime.strptime(start_time, "%H:%M")
+                start_time = d.strftime("%I:%M %p")
+            except:
+                pass
+            _transformed_item['start'] = start_time
         
         # if we've triggered the skip flag anywhere, drop this record
         if skip:
