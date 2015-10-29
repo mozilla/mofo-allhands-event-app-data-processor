@@ -219,6 +219,13 @@ def transform_data(data):
                 name_detail_list.append(_transformed_item.pop(key))
         _transformed_item['facilitators'] = ', '.join(filter(None, name_list))
         _transformed_item['facilitator_array'] = filter(None, name_detail_list)
+        
+        # remove invalid pathway labels that were used for GitHub workflow
+        pathway_list = _transformed_item['pathways'].split(',')
+        pathway_list = [
+            name for name in pathway_list if 'accepted' not in name.lower() and 'consideration' not in name.lower()
+        ]
+        _transformed_item['pathways'] = ','.join(pathway_list)
 
         # create `scheduleblock` key based on `time`
         time_data = _transformed_item.pop('time', '').split('(')
