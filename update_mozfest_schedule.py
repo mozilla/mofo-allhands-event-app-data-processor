@@ -178,6 +178,7 @@ def transform_data(data):
     * transforms column name `githubIssueNumber` into JSON key `id`
     * removes any rows that don't have a numeric `id`
     * creates a concatenated `facilitators` key
+    * removes invalid pathway labels that were used for GitHub workflow
     * creates a `scheduleblock` key based on data in `time` column
     * infers a `day` and `start` key based on data in `time` column
     '''
@@ -221,9 +222,10 @@ def transform_data(data):
         _transformed_item['facilitator_array'] = filter(None, name_detail_list)
         
         # remove invalid pathway labels that were used for GitHub workflow
+        pathway_skip_keywords = ['accepted','consideration','stipend','sample']
         pathway_list = _transformed_item['pathways'].split(',')
         pathway_list = [
-            name for name in pathway_list if 'accepted' not in name.lower() and 'consideration' not in name.lower()
+            name for name in pathway_list if not set(pathway_skip_keywords).intersection(set(name.lower().split()))
         ]
         _transformed_item['pathways'] = ','.join(pathway_list)
 
