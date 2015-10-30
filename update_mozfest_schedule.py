@@ -296,7 +296,7 @@ def commit_json(data, target_config=GITHUB_CONFIG, commit=COMMIT_JSON_TO_GITHUB)
     repo = gh.repository(target_config['REPO_OWNER'], target_config['REPO_NAME'])
     
     # check to see whether data file exists
-    contents = repo.file_contents(
+    contents = repo.contents(
         path=target_config['TARGET_FILE'],
         ref=target_config['TARGET_BRANCH']
     )
@@ -312,9 +312,11 @@ def commit_json(data, target_config=GITHUB_CONFIG, commit=COMMIT_JSON_TO_GITHUB)
             )
         else:
             # update existing file
-            contents.update(
+            repo.update_file(
+                path=target_config['TARGET_FILE'],
                 message='updating session data',
                 content=data,
+                sha=contents.sha,
                 branch=GITHUB_CONFIG['TARGET_BRANCH']
         )
 
