@@ -100,7 +100,7 @@ GITHUB_CONFIG = {
     'REPO_OWNER': 'mozilla',
     'REPO_NAME': 'mozfest-schedule-app',
     'TARGET_FILE': 'sessions.json',
-    'TARGET_BRANCH': 'gh-pages',
+    'TARGET_BRANCHES': ['gh-pages','master'],
 }
 
 GOOGLE_API_CONFIG = {
@@ -295,30 +295,31 @@ def commit_json(data, target_config=GITHUB_CONFIG, commit=COMMIT_JSON_TO_GITHUB)
     # get the right repo
     repo = gh.repository(target_config['REPO_OWNER'], target_config['REPO_NAME'])
     
-    # check to see whether data file exists
-    contents = repo.contents(
-        path=target_config['TARGET_FILE'],
-        ref=target_config['TARGET_BRANCH']
-    )
-
-    if commit:
-        if not contents:
-            # create file that doesn't exist
-            repo.create_file(
-                path=target_config['TARGET_FILE'],
-                message='adding session data',
-                content=data,
-                branch=target_config['TARGET_BRANCH']
-            )
-        else:
-            # update existing file
-            repo.update_file(
-                path=target_config['TARGET_FILE'],
-                message='updating session data',
-                content=data,
-                sha=contents.sha,
-                branch=GITHUB_CONFIG['TARGET_BRANCH']
+    for branch in target_config['TARGET_BRANCHES']:
+        # check to see whether data file exists
+        contents = repo.contents(
+            path=target_config['TARGET_FILE'],
+            ref=branch
         )
+
+        if commit:
+            if not contents:
+                # create file that doesn't exist
+                repo.create_file(
+                    path=target_config['TARGET_FILE'],
+                    message='adding session data',
+                    content=data,
+                    branch=branch
+                )
+            else:
+                # update existing file
+                repo.update_file(
+                    path=target_config['TARGET_FILE'],
+                    message='updating session data',
+                    content=data,
+                    sha=contents.sha,
+                    branch=branch
+            )
 
 def update_schedule():
     if FETCH_MULTIPLE_WORKSHEETS:
