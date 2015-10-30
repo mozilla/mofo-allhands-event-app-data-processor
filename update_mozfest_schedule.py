@@ -181,6 +181,7 @@ def transform_data(data):
     * removes invalid pathway labels that were used for GitHub workflow
     * creates a `scheduleblock` key based on data in `time` column
     * infers a `day` and `start` key based on data in `time` column
+    * prepends `location` with the word 'Floor' 
     '''
     def _transform_response_item(item, skip=False):
         # make sure vars are strings
@@ -254,6 +255,10 @@ def transform_data(data):
             except:
                 pass
             _transformed_item['start'] = start_time
+
+        # prepend `location` with the word 'Floor'
+        if _transformed_item['location'] and not _transformed_item['location'].startswith('Floor'):
+            _transformed_item['location'] = 'Floor {0}'.format(_transformed_item['location'])
         
         # if we've triggered the skip flag anywhere, drop this record
         if skip:
