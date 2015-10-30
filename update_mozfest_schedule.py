@@ -100,7 +100,7 @@ GITHUB_CONFIG = {
     'REPO_OWNER': 'mozilla',
     'REPO_NAME': 'mozfest-schedule-app',
     'TARGET_FILE': 'sessions.json',
-    'TARGET_BRANCHES': ['gh-pages','master'],
+    'TARGET_BRANCHES': ['gh-pages',],
 }
 
 GOOGLE_API_CONFIG = {
