@@ -180,6 +180,7 @@ def transform_data(data):
     * creates a concatenated `facilitators` key
     * removes invalid pathway labels that were used for GitHub workflow
     * creates a `scheduleblock` key based on data in `time` column
+    * creates Saturday and Sunday versions of sessions marked 'all-weekend'
     * infers a `day` and `start` key based on data in `time` column
     * prepends `location` with the word 'Floor' 
     '''
@@ -236,15 +237,14 @@ def transform_data(data):
         scheduleblock = time_data[0].strip()
         scheduleblock = scheduleblock.lower().replace(' ','-')
         _transformed_item['scheduleblock'] = scheduleblock
+
         # infer session day
         if 'saturday' in _transformed_item['scheduleblock']:
             _transformed_item['day'] = 'Saturday'
+            _transformed_item['start'] = 'All Day'
         if 'sunday' in _transformed_item['scheduleblock']:
             _transformed_item['day'] = 'Sunday'
-        if 'weekend' in _transformed_item['scheduleblock']:
-            # TODO
-            #_transformed_item['day'] = 'Saturday'
-            pass
+            _transformed_item['start'] = 'All Day'
         # infer start time
         if len(time_data) > 1:
             start_time = time_data[1].strip('()').split(' ')[0]
@@ -255,18 +255,36 @@ def transform_data(data):
             except:
                 pass
             _transformed_item['start'] = start_time
+        # create Saturday and Sunday versions of sessions marked 'all-weekend'
+        if 'weekend' in _transformed_item['scheduleblock']:
+            _transformed_item['start'] = 'All Weekend'
+            if 'clone_flag' in item:
+                _transformed_item['scheduleblock'] = 'all-sunday'
+            else:
+                _transformed_item['scheduleblock'] = 'all-saturday'
+                # create a cloned version for Sunday
+                cloned_item = item.copy()
+                cloned_item['clone_flag'] = True
+                cloned_data.append(cloned_item)
 
         # prepend `location` with the word 'Floor'
         if _transformed_item['location'] and not _transformed_item['location'].startswith('Floor'):
             _transformed_item['location'] = 'Floor {0}'.format(_transformed_item['location'])
-        
+                
         # if we've triggered the skip flag anywhere, drop this record
         if skip:
             _transformed_item = None
             
         return _transformed_item
     
+    # empty list to hold any items we need to duplicate
+    cloned_data = []
+    # pass initial data through the transformer
     transformed_data = filter(None, [_transform_response_item(item) for item in data])
+    # and add in any items we had to duplicate
+    transformed_data.extend(
+        filter(None, [_transform_response_item(item) for item in cloned_data])
+    )
 
     return transformed_data
 
