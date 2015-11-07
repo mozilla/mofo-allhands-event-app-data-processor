@@ -239,11 +239,11 @@ def transform_data(data):
         _transformed_item['scheduleblock'] = scheduleblock
 
         # infer session day
-        if 'all-saturday' in _transformed_item['scheduleblock']:
+        if 'saturday' in _transformed_item['scheduleblock']:
             _transformed_item['day'] = 'Saturday'
-            _transformed_item['start'] = 'All Day'
-        if 'all-sunday' in _transformed_item['scheduleblock']:
+        if 'sunday' in _transformed_item['scheduleblock']:
             _transformed_item['day'] = 'Sunday'
+        if 'all-s' in _transformed_item['scheduleblock']:
             _transformed_item['start'] = 'All Day'
         # infer start time
         if len(time_data) > 1:
@@ -260,9 +260,11 @@ def transform_data(data):
             _transformed_item['start'] = 'All Weekend'
             if 'clone_flag' in item:
                 _transformed_item['scheduleblock'] = 'all-sunday'
+                _transformed_item['day'] = 'Sunday'
                 _transformed_item['start'] = 'All Day'
             else:
                 _transformed_item['scheduleblock'] = 'all-saturday'
+                _transformed_item['day'] = 'Saturday'
                 _transformed_item['start'] = 'All Day'
                 # create a cloned version for Sunday
                 cloned_item = item.copy()
