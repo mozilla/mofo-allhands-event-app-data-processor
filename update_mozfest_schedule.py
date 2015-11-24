@@ -140,30 +140,25 @@ def open_google_spreadsheet():
     
     return spreadsheet
 
-def fetch_from_worksheet():
-    '''
-    Return data from first worksheet in Google spreadsheet.
-    '''
+def fetch_data(multiple_sheets=False, worksheets_to_skip=[]):
     spreadsheet = open_google_spreadsheet()
-    worksheet = spreadsheet.get_worksheet(0)
-    data = worksheet.get_all_records(empty2zero=False)
 
-    return data
-    
-def fetch_from_all_worksheets(worksheets_to_skip=[]):
-    '''
-    Return data from all worksheets in Google spreadsheet, optionally
-    skipping sheets identified by title in `WORKSHEETS_TO_SKIP`.
-    '''
-    spreadsheet = open_google_spreadsheet()
-    data = []
-    worksheet_list = [
-        sheet for sheet in spreadsheet.worksheets() if sheet.title not in WORKSHEETS_TO_SKIP
-    ]
+    if not multiple_sheets:
+        # Return data from first worksheet in Google spreadsheet.
+        worksheet = spreadsheet.get_worksheet(0)
+        data = worksheet.get_all_records(empty2zero=False)
 
-    for worksheet in worksheet_list:
-        worksheet.title
-        data.extend(worksheet.get_all_records(empty2zero=False))
+    else:
+        # Return data from all worksheets in Google spreadsheet, optionally
+        # skipping sheets identified by title in `WORKSHEETS_TO_SKIP`.
+        data = []
+        worksheet_list = [
+            sheet for sheet in spreadsheet.worksheets() if sheet.title not in WORKSHEETS_TO_SKIP
+        ]
+
+        for worksheet in worksheet_list:
+            worksheet.title
+            data.extend(worksheet.get_all_records(empty2zero=False))
 
     return data
 
@@ -349,10 +344,7 @@ def commit_json(data, target_config=GITHUB_CONFIG, commit=COMMIT_JSON_TO_GITHUB)
             )
 
 def update_schedule():
-    if FETCH_MULTIPLE_WORKSHEETS:
-        data = fetch_from_all_worksheets(worksheets_to_skip=WORKSHEETS_TO_SKIP)
-    else:
-        data = fetch_from_worksheet()
+    data = fetch_data(multiple_sheets=FETCH_MULTIPLE_WORKSHEETS, worksheets_to_skip=WORKSHEETS_TO_SKIP)
     #print 'Fetched the data ...'
 
     data = transform_data(data)
