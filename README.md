@@ -15,7 +15,7 @@ There are four primary methods chained together to perform these task(s).
     an opportunity to store a local copy of the JSON (useful for testing).
   
 * `commit_json()`: authenticates with GitHub and commits a JSON file
-    to the identified repository.
+    to the identified repository if data has changed since last update.
 
 Running `update_schedule()` will execute these four methods in succession.
 It can also be run from the command line: `python update_mozfest_schedule.py`
