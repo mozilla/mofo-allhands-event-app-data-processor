@@ -3,11 +3,12 @@ import github3
 import gspread
 import io
 import json
+import logging
 import os
 import requests
 from datetime import datetime
+from logging.config import dictConfig
 from oauth2client.client import SignedJwtAssertionCredentials
-
 
 GITHUB_CONFIG = {
     'TOKEN': os.environ['GITHUB_TOKEN'],
@@ -247,15 +248,21 @@ def commit_json(data, target_config=GITHUB_CONFIG, commit=COMMIT_JSON_TO_GITHUB)
                     content=data,
                     branch=branch
                 )
+                logger.info('Created new data file in repo')
             else:
-                # update existing file
-                repo.update_file(
-                    path=target_config['TARGET_FILE'],
-                    message='updating session data',
-                    content=data,
-                    sha=contents.sha,
-                    branch=branch
-            )
+                # if data has changed, update existing file
+                if data.decode('utf-8') == contents.decoded.decode('utf-8'):
+                    logger.info('Data has not changed, no commit created')
+                else:
+                    repo.update_file(
+                        path=target_config['TARGET_FILE'],
+                        message='updating schedule data',
+                        content=data,
+                        sha=contents.sha,
+                        branch=branch
+                    )
+                    logger.info('Data updated, new commit to repo')
+                
 
 def update_schedule():
     data = fetch_data(multiple_sheets=FETCH_MULTIPLE_WORKSHEETS, worksheets_to_skip=WORKSHEETS_TO_SKIP)
@@ -269,6 +276,45 @@ def update_schedule():
 
     commit_json(session_json)
     #print 'SENT THE DATA TO GITHUB!'
+
+
+'''
+Set up logging.
+'''
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'log.txt',
+            'formatter': 'verbose'
+        },
+        'console':{
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        'schedule_loader': {
+            'handlers':['file','console'],
+            'propagate': False,
+            'level':'DEBUG',
+        }
+    }
+}
+dictConfig(LOGGING)
+logger = logging.getLogger('schedule_loader')
 
 
 if __name__ == "__main__":
