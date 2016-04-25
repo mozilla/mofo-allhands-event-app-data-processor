@@ -9,6 +9,7 @@ import requests
 from datetime import datetime
 from logging.config import dictConfig
 from oauth2client.client import SignedJwtAssertionCredentials
+from helper import parseListFromEnvVar
 
 GITHUB_CONFIG = {
     'TOKEN': os.environ['GITHUB_TOKEN'],
@@ -29,12 +30,12 @@ GOOGLE_API_CONFIG = {
 GOOGLE_SPREADSHEET_KEY = os.environ['GOOGLE_SPREADSHEET_KEY'] or ''
 
 FETCH_MULTIPLE_WORKSHEETS = True
-WORKSHEETS_TO_FETCH = ['For All Participants', 'Italian', 'Japanese'] 
-WORKSHEETS_TO_SKIP = ['Template', '(backup) original imported data']
 
 MAKE_LOCAL_JSON = True
 COMMIT_JSON_TO_GITHUB = False
 
+WORKSHEETS_TO_FETCH = parseListFromEnvVar(os.environ['WORKSHEETS_TO_FETCH'])
+WORKSHEETS_TO_SKIP = parseListFromEnvVar(os.environ['WORKSHEETS_TO_SKIP'])
 
 def authenticate_with_google():
     '''
