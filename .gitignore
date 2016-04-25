@@ -1,4 +1,5 @@
 venv
 .env
+.local-env-*
 *.pyc
 *.json
