@@ -301,7 +301,7 @@ def commit_json(data, target_config=GITHUB_CONFIG, commit=COMMIT_JSON_TO_GITHUB)
                     content=data,
                     branch=branch
                 )
-                logger.info('Created new data file in repo')
+                logger.info('Created new data file in repo ' + os.environ['REPO_OWNER'] + "/" + os.environ['REPO_NAME'])
             else:
                 # if data has changed, update existing file
                 if data.decode('utf-8') == contents.decoded.decode('utf-8'):
@@ -314,7 +314,7 @@ def commit_json(data, target_config=GITHUB_CONFIG, commit=COMMIT_JSON_TO_GITHUB)
                         sha=contents.sha,
                         branch=branch
                     )
-                    logger.info('Data updated, new commit to repo')
+                    logger.info('Data updated, new commit to repo ' + os.environ['REPO_OWNER'] + "/" + os.environ['REPO_NAME'])
                 
 
 def update_schedule():
