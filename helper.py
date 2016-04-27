@@ -4,5 +4,4 @@ def parseListFromEnvVar(str):
     for i, sheetName in enumerate(theList):
         theList[i] = theList[i].strip()
 
-    print theList
     return theList

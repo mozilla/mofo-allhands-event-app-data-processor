@@ -201,9 +201,19 @@ def transform_session_data(data):
         _transformed_item['timeblock'] = timeblock
 
         # infer session day
-        if 'saturday' in _transformed_item['timeblock']:
+        if 'Monday' in time_data:
+            _transformed_item['day'] = 'Monday'
+        if 'Tuesday' in time_data:
+            _transformed_item['day'] = 'Tuesday'
+        if 'Wednesday' in time_data:
+            _transformed_item['day'] = 'Wednesday'
+        if 'Thursday' in time_data:
+            _transformed_item['day'] = 'Thursday'
+        if 'Friday' in time_data:
+            _transformed_item['day'] = 'Friday'
+        if 'Saturday' in time_data:
             _transformed_item['day'] = 'Saturday'
-        if 'sunday' in _transformed_item['timeblock']:
+        if 'Sunday' in time_data:
             _transformed_item['day'] = 'Sunday'
         # if 'all-s' in _transformed_item['timeblock']:
         #     _transformed_item['start'] = 'All Day'
