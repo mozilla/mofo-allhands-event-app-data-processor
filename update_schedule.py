@@ -88,10 +88,8 @@ def fetch_worksheets(spreadsheet, multiple_sheets=False, worksheets_to_fetch=[])
     return data 
 
 def slugify_timeblock(timeblock):
-    time_data = timeblock.split('(')
     # "slugified" version of timeblock
-    timeblock = time_data[0].strip()
-    timeblock = timeblock.lower().replace(' ','-').replace(',','').replace(':','-').replace('*','')
+    timeblock = timeblock.strip().lower().replace(' ','-').replace(',','').replace(':','-').replace('*','').replace('&','-').replace('(','-').replace(')','-')
     return timeblock
 
 def transform_timeblock_data(data):
