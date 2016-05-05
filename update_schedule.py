@@ -93,18 +93,17 @@ def slugify_timeblock(timeblock):
     return timeblock
 
 def transform_timeblock_data(data):
-    def _transform_response_item(item, skip=False):
+    def _transform_response_item(item, index, skip=False):
+
         # make sure vars are strings
         _transformed_item = {k: unicode(v) for k, v in item.iteritems() if k}
         
-        if 'order' in _transformed_item:
-            _transformed_item['order'] = _transformed_item.pop('order', '')
-
-            # remove rows with `id` that is blank or provides instructions
-            try:
-                int(_transformed_item['order'])
-            except:
-                skip = True
+        # remove rows that are blank or used for providing instructions
+        if _transformed_item['day'] and _transformed_item['start time']:
+            # +1 because we want order to start from 1
+             _transformed_item['order'] = index+1
+        else:
+            skip = True
 
         #
         if 'reserved for everyone' in _transformed_item:
@@ -122,14 +121,14 @@ def transform_timeblock_data(data):
             
         return _transformed_item
 
-    # empty list to hold any items we need to duplicate
-    cloned_data = []
-    # pass initial data through the transformer
-    transformed_data = filter(None, [_transform_response_item(item) for item in data])
-    # and add in any items we had to duplicate
-    transformed_data.extend(
-        filter(None, [_transform_response_item(item) for item in cloned_data])
-    )
+    def byStartTime(timeblock):
+        return timeblock['start time']
+
+    # sort timeblocks by their start time
+    data = sorted(data, key=byStartTime)
+
+    # pass data through the transformer
+    transformed_data = filter(None, [_transform_response_item(item,index) for index, item in enumerate(data)])
 
     return transformed_data
 
