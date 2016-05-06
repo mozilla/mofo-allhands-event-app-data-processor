@@ -11,10 +11,15 @@ from logging.config import dictConfig
 from oauth2client.client import SignedJwtAssertionCredentials
 from helper import parseListFromEnvVar
 
+
+# check for optional environment vars
+TARGET_DIR = os.environ['TARGET_DIR'] + "/" if 'TARGET_DIR' in os.environ and os.environ['TARGET_DIR'] is not '' else False
+
 GITHUB_CONFIG = {
     'TOKEN': os.environ['GITHUB_TOKEN'],
     'REPO_OWNER': os.environ['REPO_OWNER'],
     'REPO_NAME': os.environ['REPO_NAME'],
+    'TARGET_DIR': TARGET_DIR or '',
     'TARGET_FILE': 'sessions.json',
     'TARGET_BRANCHES': ['gh-pages',],
 }
@@ -292,11 +297,12 @@ def commit_json(data, target_config=GITHUB_CONFIG, commit=COMMIT_JSON_TO_GITHUB)
     
     # get the right repo
     repo = gh.repository(target_config['REPO_OWNER'], target_config['REPO_NAME'])
-    
+    file_path = target_config['TARGET_DIR'] + target_config['TARGET_FILE']
+
     for branch in target_config['TARGET_BRANCHES']:
         # check to see whether data file exists
         contents = repo.contents(
-            path=target_config['TARGET_FILE'],
+            path=file_path,
             ref=branch
         )
 
@@ -304,25 +310,25 @@ def commit_json(data, target_config=GITHUB_CONFIG, commit=COMMIT_JSON_TO_GITHUB)
             if not contents:
                 # create file that doesn't exist
                 repo.create_file(
-                    path=target_config['TARGET_FILE'],
+                    path=file_path,
                     message='adding session data',
                     content=data,
                     branch=branch
                 )
-                logger.info('Created new data file in repo ' + os.environ['REPO_OWNER'] + "/" + os.environ['REPO_NAME'])
+                logger.info('Created new data file ' + file_path + ' in repo ' + os.environ['REPO_OWNER'] + "/" + os.environ['REPO_NAME'])
             else:
                 # if data has changed, update existing file
                 if data.decode('utf-8') == contents.decoded.decode('utf-8'):
                     logger.info('Data has not changed, no commit created')
                 else:
                     repo.update_file(
-                        path=target_config['TARGET_FILE'],
+                        path=file_path,
                         message='updating schedule data',
                         content=data,
                         sha=contents.sha,
                         branch=branch
                     )
-                    logger.info('Data updated, new commit to repo ' + os.environ['REPO_OWNER'] + "/" + os.environ['REPO_NAME'])
+                    logger.info('Data updated! Updated ' + file_path +' has been committed to repo ' + os.environ['REPO_OWNER'] + "/" + os.environ['REPO_NAME'])
                 
 
 def update_schedule():

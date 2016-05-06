@@ -1,5 +1,6 @@
 export REPO_OWNER=
 export REPO_NAME=
+export TARGET_DIR=
 export GITHUB_TOKEN=
 export GOOGLE_API_CLIENT_EMAIL=
 export GOOGLE_API_PRIVATE_KEY=
