@@ -19,26 +19,6 @@ It handles the following tasks
 4. Running **`update_schedule()`** will execute [these methods](https://github.com/mozilla/schedule-app-data-processor#primary-methods-of-the-script) in succession. You can trigger
 it from the command line: **`python update_schedule.py`**
 
-
-## Primary methods of the script
-
-There are 5 primary methods chained together to perform these task(s).
-
-- **`fetch_data()`** uses Oauth2 credentials to authenticate with Google and copy 
-data from a spreadsheet into a Python dict.
-  
-- **`transform_timeblock_data()`** passes each item in the Python dict through a
-filter, providing an opportunity to validate, transform, remove fields, etc.
-
-- **`transform_session_data()`** passes each item in the Python dict through a
-as filter, providing an opportunity to validate, transform, remove fields, etc.
-  
-- **`make_json()`** converts the Python dict into a JSON array, and provides an
-opportunity to store a local copy of the JSON (useful for testing).
-  
-- **`commit_json()`** authenticates with GitHub and commits a JSON file to the
-identified repository if data has changed since last update.
-
 ## Create a Python virtual environment
 
 To install the requirements for this script, create a Python virtual environment 
@@ -93,11 +73,10 @@ In `update_schedule.py`...
 You should change the values according to your project.
 
 * **TARGET_FILE:** a string representing the name of the file you want to
-  create or update in the GitHub repository. This can include path information,
-  e.g. 'sessions.json', or '_data/sessions.json'
+  create or update in the GitHub repository. By default, it is set to `sessions.json`
 
-* **TARGET_BRANCHES:** a list representing the branch(es) of the repository you want to commit
-  to, e.g. ['gh-pages',] or ['gh-pages','master']
+* **TARGET_BRANCHES:** a list representing the branch(es) of the repository you 
+  want to commit to, e.g. `['gh-pages',]` or `['gh-pages','master']`
 
 * **FETCH_MULTIPLE_WORKSHEETS:** set to `True` if `GOOGLE_SPREADSHEET_KEY`
   points to a document with data in multiple worksheets. The import will
@@ -114,3 +93,23 @@ You should change the values according to your project.
   `True`, the `commit_json()` method will create or update a JSON file in the
   GitHub repository you specify. Can be set to `False` for testing, which will
   authenticate with GitHub but not create or update any files.
+
+
+## Primary methods of the script
+
+There are 5 primary methods chained together to perform these task(s).
+
+- **`fetch_data()`** uses Oauth2 credentials to authenticate with Google and copy 
+data from a spreadsheet into a Python dict.
+  
+- **`transform_timeblock_data()`** passes each item in the Python dict through a
+filter, providing an opportunity to validate, transform, remove fields, etc.
+
+- **`transform_session_data()`** passes each item in the Python dict through a
+as filter, providing an opportunity to validate, transform, remove fields, etc.
+  
+- **`make_json()`** converts the Python dict into a JSON array, and provides an
+opportunity to store a local copy of the JSON (useful for testing).
+  
+- **`commit_json()`** authenticates with GitHub and commits a JSON file to the
+identified repository if data has changed since last update.
