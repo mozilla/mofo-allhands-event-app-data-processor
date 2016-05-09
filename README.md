@@ -3,18 +3,21 @@
 This script is designed as a data processor helper for [schedule app core](https://github .com/mozilla /schedule-app- core/).
 
 It handles the following tasks
-- takes data from a Google spreadsheet,
-- converts it to a JSON array where each object has keys corresponding to the 
+
+1. takes data from a Google spreadsheet [TODO: add link to Google spreadsheet template],
+2. converts it to a JSON array where each object has keys corresponding to the 
   spreadsheet column names,
-- then stores that JSON locally and/or automatically commits it to a GitHub 
+3. then stores that JSON locally and/or automatically commits it to a GitHub 
   repo (your schedule app repo, e.g., [MoFo All-hands schedule app](https://github.com/m ozilla/mofo- allhands)).
 
 ## To run the script
 
-Running **`update_schedule()`** will execute [these methods](https://github.com/mozilla/schedule-app-data-processor#primary-methods-of-the-script) in succession. 
-
-It can also be run from the command line: **`python
-update_schedule.py`**
+1. Create a Python virtual environment and install all the required packages. See 
+[create a Python virtual environment docs](https://github.com/mozilla/schedule-app-data-processor#create-a-python-virtual-environment) for instructions.
+2. Get API creds from GitHub and Google. See [authentication docs](https://github.com/mozilla/schedule-app-data-processor#authentication) for instructions.
+3. Set values for [environment variables](https://github.com/mozilla/schedule-app-data-processor#environment-variables) and run `source your-file-name.env`
+4. Running **`update_schedule()`** will execute [these methods](https://github.com/mozilla/schedule-app-data-processor#primary-methods-of-the-script) in succession. You can trigger
+it from the command line: **`python update_schedule.py`**
 
 
 ## Primary methods of the script
@@ -36,7 +39,7 @@ opportunity to store a local copy of the JSON (useful for testing).
 - **`commit_json()`** authenticates with GitHub and commits a JSON file to the
 identified repository if data has changed since last update.
 
-## Requirements
+## Create a Python virtual environment
 
 To install the requirements for this script, create a Python virtual environment 
 using `virtualenv` and `virtualenvwrapper` (see [this guide](http://www.silverwareconsulting.com/index.cfm/2012/7/24/Getting-Started-with-virtualenv-and-virtualenvwrapper-in-Python) 
@@ -62,9 +65,9 @@ Follow these instructions to create *a service account*: https://developers.goog
     
 Creating a service account will generate a special client email address and
 a new private key. The client email address should be stored in an environment 
-variable called `GOOGLE_API_CLIENT_EMAIL` [TODO: see env var section]. The private key should be stored in an environment variable called `GOOGLE_API_PRIVATE_KEY`.
+variable called [`GOOGLE_API_CLIENT_EMAIL`](https://github.com/mozilla/schedule-app-data-processor#environment-variables). The private key should be stored in an environment variable called [`GOOGLE_API_PRIVATE_KEY`](https://github.com/mozilla/schedule-app-data-processor#environment-variables).
 
-## Basic project settings
+## Project settings
 
 ### Environment variables
 
