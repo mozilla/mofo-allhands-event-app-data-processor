@@ -40,7 +40,6 @@ MAKE_LOCAL_JSON = True
 COMMIT_JSON_TO_GITHUB = False
 
 WORKSHEETS_TO_FETCH = parseListFromEnvVar(os.environ['WORKSHEETS_TO_FETCH'])
-WORKSHEETS_TO_SKIP = parseListFromEnvVar(os.environ['WORKSHEETS_TO_SKIP'])
 
 def authenticate_with_google():
     '''
@@ -62,12 +61,12 @@ def open_google_spreadsheet():
     
     return spreadsheet
 
-def fetch_data(multiple_sheets=False, worksheets_to_skip=[]):
+def fetch_data(multiple_sheets=False, worksheets_to_fetch=[]):
     spreadsheet = open_google_spreadsheet()
 
     data = { 
         'timeblocks': fetch_worksheets(spreadsheet, multiple_sheets, ['* Timeblock Values']),
-        'sessions': fetch_worksheets(spreadsheet, multiple_sheets, WORKSHEETS_TO_FETCH) 
+        'sessions': fetch_worksheets(spreadsheet, multiple_sheets, worksheets_to_fetch) 
     }
 
     return data
@@ -332,7 +331,7 @@ def commit_json(data, target_config=GITHUB_CONFIG, commit=COMMIT_JSON_TO_GITHUB)
                 
 
 def update_schedule():
-    data = fetch_data(multiple_sheets=FETCH_MULTIPLE_WORKSHEETS, worksheets_to_skip=WORKSHEETS_TO_SKIP)
+    data = fetch_data(multiple_sheets=FETCH_MULTIPLE_WORKSHEETS, worksheets_to_fetch=WORKSHEETS_TO_FETCH)
     print 'Fetched the data ...'
 
     data = {
