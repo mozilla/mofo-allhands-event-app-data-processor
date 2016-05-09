@@ -26,7 +26,7 @@ Follow these instructions to create *a service account*: https://developers.goog
     
 Creating a service account will generate a special client email address and
 a new private key. The client email address should be stored in an environment 
-variable called [`GOOGLE_API_CLIENT_EMAIL`](https://github.com/mozilla/schedule-app-data-processor#environment-variables). The private key should be stored in an environment variable called [`GOOGLE_API_PRIVATE_KEY`](https://github.com/mozilla/schedule-app-data-processor#environment-variables).
+variable called [`GOOGLE_API_CLIENT_EMAIL`](https://github.com/mozilla/schedule-app-data-processor/blob/master/docs/REQUIREMENTS.md#environment-variables). The private key should be stored in an environment variable called [`GOOGLE_API_PRIVATE_KEY`](https://github.com/mozilla/schedule-app-data-processor/blob/master/docs/REQUIREMENTS.md#environment-variables).
 
 ## Project settings
 
@@ -40,9 +40,9 @@ copying [sample.env](https://github.com/mozilla/schedule-app-data-processor/blob
 | **`REPO_OWNER`**              | A string representing the GitHub username of the account that,owns the repository you want to commit to |
 | **`REPO_NAME`**               | A string representing the name of the repository to commit to |
 | **`TARGET_DIR`**              | Name of the directory you are committing `sessions.json` file to. Leave blank or omit this variable if `sessions.json` is going to live on root directory. |
-| **`GITHUB_TOKEN`**            | Your GitHub token. See [authentication docs](https://github.com/mozilla/schedule-app-data-processor#authentication) on how to acquire a GitHub token. |
-| **`GOOGLE_API_CLIENT_EMAIL`** | Your Google API client email. See [authentication docs](https://github.com/mozilla/schedule-app-data-processor#authentication) on how to create a Google service account. |
-| **`GOOGLE_API_PRIVATE_KEY`**  | Your Google API private key. See [authentication docs](https://github.com/mozilla/schedule-app-data-processor#authentication) on how to create a Google service account. |
+| **`GITHUB_TOKEN`**            | Your GitHub token. See [authentication docs](https://github.com/mozilla/schedule-app-data-processor/blob/master/docs/REQUIREMENTS.md#authentication) on how to acquire a GitHub token. |
+| **`GOOGLE_API_CLIENT_EMAIL`** | Your Google API client email. See [authentication docs](https://github.com/mozilla/schedule-app-data-processor/blob/master/docs/REQUIREMENTS.md#authentication) on how to create a Google service account. |
+| **`GOOGLE_API_PRIVATE_KEY`**  | Your Google API private key. See [authentication docs](https://github.com/mozilla/schedule-app-data-processor/blob/master/docs/REQUIREMENTS.md#authentication) on how to create a Google service account. |
 | **`GOOGLE_SPREADSHEET_KEY`**  | A string representing the unique ID of the Google spreadsheet storing your data. |
 | **`WORKSHEETS_TO_FETCH`**     | if `FETCH_MULTIPLE_WORKSHEETS` is set to `True`, you may define a list of worksheet names to fetch data from. e.g. `['Template', '(backup data)']` |
 
