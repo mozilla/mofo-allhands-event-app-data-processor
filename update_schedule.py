@@ -11,17 +11,39 @@ from logging.config import dictConfig
 from oauth2client.client import SignedJwtAssertionCredentials
 from helper import parseListFromEnvVar
 
+# #####
+# Look for optional environment variables.
+# If not set, use default values.
+# #####
 
-# check for optional environment vars
-TARGET_DIR = os.environ['TARGET_DIR'] + "/" if 'TARGET_DIR' in os.environ and os.environ['TARGET_DIR'] is not '' else False
+# TARGET_DIR. Default value ''.
+TARGET_DIR = os.environ['TARGET_DIR'] + "/" if 'TARGET_DIR' in os.environ and os.environ['TARGET_DIR'] is not '' else ''
+
+# TARGET_BRANCHES. Default value ['gh-pages'].
+TARGET_BRANCHES = parseListFromEnvVar(os.environ['TARGET_BRANCHES']) if 'TARGET_BRANCHES' in os.environ else ['gh-pages']
+
+# FETCH_MULTIPLE_WORKSHEETS. Default value True.
+FETCH_MULTIPLE_WORKSHEETS = os.environ['FETCH_MULTIPLE_WORKSHEETS'] if 'FETCH_MULTIPLE_WORKSHEETS' in os.environ else True
+
+# MAKE_LOCAL_JSON. Default value True.
+MAKE_LOCAL_JSON = os.environ['MAKE_LOCAL_JSON'] if 'MAKE_LOCAL_JSON' in os.environ else True
+
+# COMMIT_JSON_TO_GITHUB. Default value False.
+COMMIT_JSON_TO_GITHUB = os.environ['COMMIT_JSON_TO_GITHUB'] if 'COMMIT_JSON_TO_GITHUB' in os.environ else False
+
+# WORKSHEETS_TO_FETCH. Default value [].
+WORKSHEETS_TO_FETCH = parseListFromEnvVar(os.environ['WORKSHEETS_TO_FETCH']) if 'WORKSHEETS_TO_FETCH' in os.environ else []
+
+# PROMPT_BEFORE_COMMIT_TO_GITHUB. Default value False.
+PROMPT_BEFORE_COMMIT_TO_GITHUB = os.environ['PROMPT_BEFORE_COMMIT_TO_GITHUB'] if 'PROMPT_BEFORE_COMMIT_TO_GITHUB' in os.environ else False
 
 GITHUB_CONFIG = {
     'TOKEN': os.environ['GITHUB_TOKEN'],
     'REPO_OWNER': os.environ['REPO_OWNER'],
     'REPO_NAME': os.environ['REPO_NAME'],
-    'TARGET_DIR': TARGET_DIR or '',
+    'TARGET_DIR': TARGET_DIR,
     'TARGET_FILE': 'sessions.json',
-    'TARGET_BRANCHES': ['gh-pages',],
+    'TARGET_BRANCHES': TARGET_BRANCHES
 }
 
 GOOGLE_API_CONFIG = {
@@ -30,16 +52,7 @@ GOOGLE_API_CONFIG = {
     'SCOPE': ['https://spreadsheets.google.com/feeds']
 }
 
-# can be stored as an environment variable if worried
-# about security or simply stored as string here 
-GOOGLE_SPREADSHEET_KEY = os.environ['GOOGLE_SPREADSHEET_KEY'] or ''
-
-FETCH_MULTIPLE_WORKSHEETS = True
-
-MAKE_LOCAL_JSON = True
-COMMIT_JSON_TO_GITHUB = False
-
-WORKSHEETS_TO_FETCH = parseListFromEnvVar(os.environ['WORKSHEETS_TO_FETCH'])
+GOOGLE_SPREADSHEET_KEY = os.environ['GOOGLE_SPREADSHEET_KEY']
 
 def authenticate_with_google():
     '''
@@ -296,6 +309,7 @@ def commit_json(data, target_config=GITHUB_CONFIG, commit=COMMIT_JSON_TO_GITHUB)
     
     # get the right repo
     repo = gh.repository(target_config['REPO_OWNER'], target_config['REPO_NAME'])
+    repo_location = os.environ['REPO_OWNER'] + "/" + os.environ['REPO_NAME']
     file_path = target_config['TARGET_DIR'] + target_config['TARGET_FILE']
 
     for branch in target_config['TARGET_BRANCHES']:
@@ -306,6 +320,12 @@ def commit_json(data, target_config=GITHUB_CONFIG, commit=COMMIT_JSON_TO_GITHUB)
         )
 
         if commit:
+            if PROMPT_BEFORE_COMMIT_TO_GITHUB:
+                confirm_commit = raw_input("[Please Confirm] Commit " + file_path + " to repo " + repo_location + "? (Y/N): ")
+            else:
+                confirm_commit = "Y"
+
+        if confirm_commit == "Y":
             if not contents:
                 # create file that doesn't exist
                 repo.create_file(
@@ -314,7 +334,7 @@ def commit_json(data, target_config=GITHUB_CONFIG, commit=COMMIT_JSON_TO_GITHUB)
                     content=data,
                     branch=branch
                 )
-                logger.info('Created new data file ' + file_path + ' in repo ' + os.environ['REPO_OWNER'] + "/" + os.environ['REPO_NAME'])
+                logger.info('Created new data file ' + file_path + ' in repo ' + repo_location)
             else:
                 # if data has changed, update existing file
                 if data.decode('utf-8') == contents.decoded.decode('utf-8'):
@@ -327,7 +347,7 @@ def commit_json(data, target_config=GITHUB_CONFIG, commit=COMMIT_JSON_TO_GITHUB)
                         sha=contents.sha,
                         branch=branch
                     )
-                    logger.info('Data updated! Updated ' + file_path +' has been committed to repo ' + os.environ['REPO_OWNER'] + "/" + os.environ['REPO_NAME'])
+                    logger.info('Data updated! Updated ' + file_path +' has been committed to repo ' + repo_location)
                 
 
 def update_schedule():
