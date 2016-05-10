@@ -44,7 +44,7 @@ copying [sample.env](https://github.com/mozilla/schedule-app-data-processor/blob
 | **`GOOGLE_API_CLIENT_EMAIL`** | Your Google API client email. See [authentication docs](https://github.com/mozilla/schedule-app-data-processor/blob/master/docs/REQUIREMENTS.md#authentication) on how to create a Google service account. |
 | **`GOOGLE_API_PRIVATE_KEY`**  | Your Google API private key. See [authentication docs](https://github.com/mozilla/schedule-app-data-processor/blob/master/docs/REQUIREMENTS.md#authentication) on how to create a Google service account. |
 | **`GOOGLE_SPREADSHEET_KEY`**  | A string representing the unique ID of the Google spreadsheet storing your data. |
-| **`WORKSHEETS_TO_FETCH`**     | if `FETCH_MULTIPLE_WORKSHEETS` is set to `True`, you may define a list of worksheet names to fetch data from. e.g. `['Template', '(backup data)']` |
+| **`WORKSHEETS_TO_FETCH`**     | if `FETCH_MULTIPLE_WORKSHEETS` is set to `True`, you may define a list of worksheet names(in comma-separated format) to fetch data from. e.g. `'sheet1, sheet2, sheet3'` |
 
 
 ### Other settings
