@@ -29,13 +29,13 @@ FETCH_MULTIPLE_WORKSHEETS = os.environ['FETCH_MULTIPLE_WORKSHEETS'] if 'FETCH_MU
 MAKE_LOCAL_JSON = os.environ['MAKE_LOCAL_JSON'] if 'MAKE_LOCAL_JSON' in os.environ else True
 
 # COMMIT_JSON_TO_GITHUB. Default value False.
-COMMIT_JSON_TO_GITHUB = os.environ['COMMIT_JSON_TO_GITHUB'] if 'COMMIT_JSON_TO_GITHUB' in os.environ else False
+COMMIT_JSON_TO_GITHUB = True if 'COMMIT_JSON_TO_GITHUB' in os.environ and os.environ['COMMIT_JSON_TO_GITHUB'] == 'True' else False
 
 # WORKSHEETS_TO_FETCH. Default value [].
 WORKSHEETS_TO_FETCH = parseListFromEnvVar(os.environ['WORKSHEETS_TO_FETCH']) if 'WORKSHEETS_TO_FETCH' in os.environ else []
 
 # PROMPT_BEFORE_COMMIT_TO_GITHUB. Default value False.
-PROMPT_BEFORE_COMMIT_TO_GITHUB = os.environ['PROMPT_BEFORE_COMMIT_TO_GITHUB'] if 'PROMPT_BEFORE_COMMIT_TO_GITHUB' in os.environ else False
+PROMPT_BEFORE_COMMIT_TO_GITHUB = True if 'PROMPT_BEFORE_COMMIT_TO_GITHUB' in os.environ and os.environ['PROMPT_BEFORE_COMMIT_TO_GITHUB'] == 'True' else False
 
 GITHUB_CONFIG = {
     'TOKEN': os.environ['GITHUB_TOKEN'],
@@ -318,6 +318,8 @@ def commit_json(data, target_config=GITHUB_CONFIG, commit=COMMIT_JSON_TO_GITHUB)
             path=file_path,
             ref=branch
         )
+
+        confirm_commit = False
 
         if commit:
             if PROMPT_BEFORE_COMMIT_TO_GITHUB:
