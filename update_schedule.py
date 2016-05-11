@@ -31,8 +31,8 @@ MAKE_LOCAL_JSON = os.environ['MAKE_LOCAL_JSON'] if 'MAKE_LOCAL_JSON' in os.envir
 # COMMIT_JSON_TO_GITHUB. Default value False.
 COMMIT_JSON_TO_GITHUB = True if 'COMMIT_JSON_TO_GITHUB' in os.environ and os.environ['COMMIT_JSON_TO_GITHUB'] == 'True' else False
 
-# WORKSHEETS_TO_FETCH. Default value [].
-WORKSHEETS_TO_FETCH = parseListFromEnvVar(os.environ['WORKSHEETS_TO_FETCH']) if 'WORKSHEETS_TO_FETCH' in os.environ else []
+# SESSIONS_WORKSHEETS_TO_FETCH. Default value [].
+SESSIONS_WORKSHEETS_TO_FETCH = parseListFromEnvVar(os.environ['SESSIONS_WORKSHEETS_TO_FETCH']) if 'SESSIONS_WORKSHEETS_TO_FETCH' in os.environ else []
 
 # PROMPT_BEFORE_COMMIT_TO_GITHUB. Default value False.
 PROMPT_BEFORE_COMMIT_TO_GITHUB = True if 'PROMPT_BEFORE_COMMIT_TO_GITHUB' in os.environ and os.environ['PROMPT_BEFORE_COMMIT_TO_GITHUB'] == 'True' else False
@@ -74,28 +74,28 @@ def open_google_spreadsheet():
     
     return spreadsheet
 
-def fetch_data(multiple_sheets=False, worksheets_to_fetch=[]):
+def fetch_data(multiple_sheets=False, sessions_worksheets_to_fetch=[]):
     spreadsheet = open_google_spreadsheet()
 
     data = { 
         'timeblocks': fetch_worksheets(spreadsheet, multiple_sheets, ['* Timeblock Values']),
-        'sessions': fetch_worksheets(spreadsheet, multiple_sheets, worksheets_to_fetch) 
+        'sessions': fetch_worksheets(spreadsheet, multiple_sheets, sessions_worksheets_to_fetch) 
     }
 
     return data
 
-def fetch_worksheets(spreadsheet, multiple_sheets=False, worksheets_to_fetch=[]):
+def fetch_worksheets(spreadsheet, multiple_sheets=False, sessions_worksheets_to_fetch=[]):
     if not multiple_sheets:
         # Return data from first worksheet in Google spreadsheet.
         worksheet = spreadsheet.get_worksheet(0)
         data = worksheet.get_all_records(empty2zero=False)
 
     else:
-        # Return data from all worksheets in worksheets_to_fetch
+        # Return data from all worksheets in sessions_worksheets_to_fetch
         data = []
 
         worksheet_list = [
-            sheet for sheet in spreadsheet.worksheets() if sheet.title in worksheets_to_fetch
+            sheet for sheet in spreadsheet.worksheets() if sheet.title in sessions_worksheets_to_fetch
         ]
 
         for worksheet in worksheet_list:
@@ -353,7 +353,7 @@ def commit_json(data, target_config=GITHUB_CONFIG, commit=COMMIT_JSON_TO_GITHUB)
                 
 
 def update_schedule():
-    data = fetch_data(multiple_sheets=FETCH_MULTIPLE_WORKSHEETS, worksheets_to_fetch=WORKSHEETS_TO_FETCH)
+    data = fetch_data(multiple_sheets=FETCH_MULTIPLE_WORKSHEETS, sessions_worksheets_to_fetch=SESSIONS_WORKSHEETS_TO_FETCH)
     print 'Fetched the data ...'
 
     data = {
