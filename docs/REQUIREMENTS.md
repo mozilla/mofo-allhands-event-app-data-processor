@@ -28,6 +28,8 @@ Creating a service account will generate a special client email address and
 a new private key. The client email address should be stored in an environment 
 variable called [`GOOGLE_API_CLIENT_EMAIL`](https://github.com/mozilla/schedule-app-data-processor/blob/master/docs/REQUIREMENTS.md#environment-variables). The private key should be stored in an environment variable called [`GOOGLE_API_PRIVATE_KEY`](https://github.com/mozilla/schedule-app-data-processor/blob/master/docs/REQUIREMENTS.md#environment-variables).
 
+Share the spreadsheet as "View Only" with the service account that you created (The email used as `GOOGLE_API_CLIENT_EMAIL`).
+
 ## Project settings
 
 ### Environment variables
