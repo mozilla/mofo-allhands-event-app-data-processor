@@ -110,15 +110,14 @@ def slugify_timeblock(timeblock):
     return timeblock
 
 def transform_timeblock_data(data):
-    def _transform_response_item(item, index, skip=False):
+    def _transform_response_item(item, skip=False):
 
         # make sure vars are strings
         _transformed_item = {k: unicode(v) for k, v in item.iteritems() if k}
         
         # remove rows that are blank or used for providing instructions
-        if _transformed_item['day'] and _transformed_item['start time']:
-            # +1 because we want order to start from 1
-             _transformed_item['order'] = index+1
+        if _transformed_item['day'] and _transformed_item['day'].find('select from dropdown') == -1 and _transformed_item['start time']:
+            skip = False
         else:
             skip = True
 
@@ -138,14 +137,39 @@ def transform_timeblock_data(data):
             
         return _transformed_item
 
-    def byStartTime(timeblock):
-        return timeblock['start time']
+    def _add_timeblock_order(item, index, skip=False):
+        # make sure vars are strings
+        _transformed_item = {k: unicode(v) for k, v in item.iteritems() if k}
+        # +1 because we want order to start from 1
+        _transformed_item['order'] = index+1
+        return _transformed_item
 
-    # sort timeblocks by their start time
-    data = sorted(data, key=byStartTime)
+    dayOrder = {
+        'Monday': 1,
+        'Tuesday': 2,
+        'Wednesday': 3,
+        'Thursday': 4,
+        'Friday': 5,
+        'Saturday': 6,
+        'Sunday': 7
+    }
+
+    def dayComparator(x, y):
+        if dayOrder[x['day']] <  dayOrder[y['day']]:
+            return -1
+        elif dayOrder[x['day']] > dayOrder[y['day']]:
+            return 1
+        else:
+            return 0
 
     # pass data through the transformer
-    transformed_data = filter(None, [_transform_response_item(item,index) for index, item in enumerate(data)])
+    transformed_data = filter(None, [_transform_response_item(item) for item in data])
+    # sort timeblocks by day in week
+    transformed_data.sort(dayComparator)
+    # sort timeblocks again by start time in a day
+    transformed_data = sorted(transformed_data, key=lambda timeblock:(timeblock['start time']))
+    # assign 'order' to timeblock
+    transformed_data = filter(None, [_add_timeblock_order(item,index) for index, item in enumerate(transformed_data)])
 
     return transformed_data
 
