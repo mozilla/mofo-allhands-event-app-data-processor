@@ -164,10 +164,10 @@ def transform_timeblock_data(data):
 
     # pass data through the transformer
     transformed_data = filter(None, [_transform_response_item(item) for item in data])
-    # sort timeblocks by day in week
-    transformed_data.sort(dayComparator)
-    # sort timeblocks again by start time in a day
+    # sort timeblocks by start time in a day
     transformed_data = sorted(transformed_data, key=lambda timeblock:(timeblock['start time']))
+    # sort timeblocks again by day in week
+    transformed_data.sort(dayComparator)
     # assign 'order' to timeblock
     transformed_data = filter(None, [_add_timeblock_order(item,index) for index, item in enumerate(transformed_data)])
 
