@@ -265,6 +265,9 @@ def transform_session_data(data):
                 # attempt to coerce to 12-hour format
                 d = datetime.strptime(start_time, "%H:%M")
                 start_time = d.strftime("%I:%M %p")
+                if start_time[0] == '0':
+                    # strip leading 0
+                    start_time =  start_time[1:]
             except:
                 start_time = ''
                 pass
