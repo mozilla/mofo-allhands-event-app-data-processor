@@ -181,7 +181,7 @@ def transform_session_data(data):
     * ensures that all variables going into the JSON are strings
     * removes `proposalSpreadsheetRowNumber` to make JSON smaller
     * transforms column name `name` into JSON key `title`
-    * transforms column name `githubIssueNumber` into JSON key `id`
+    * transforms column name `id` into JSON key `id`
     * removes any rows that don't have a numeric `id`
     * creates a concatenated `facilitators` key
     * removes invalid pathway labels that were used for GitHub workflow
@@ -203,7 +203,7 @@ def transform_session_data(data):
             if _transformed_item['title'].lower().startswith('[path'):
                 skip = True
         
-        # transform `githubIssueNumber` column name into `id` key
+        # set `id` key
         # (and skip rows without a valid id)
         if 'id' in _transformed_item:
             _transformed_item['id'] = _transformed_item.pop('id', '')
@@ -220,11 +220,13 @@ def transform_session_data(data):
         name_detail_list = []
         for key in _transformed_item.keys():
             if key.startswith('facilitator'):
-                name_list.append(_transformed_item[key].split(",")[0])
-                name_detail_list.append(_transformed_item.pop(key))
+                order = key[len('facilitator'):].strip() # facilitator order in spreadsheet
+                index = int(order)-1 # order start from 1 but list index start from 0
+                name_list.insert(index,_transformed_item[key].split(",")[0])
+                name_detail_list.insert(index,_transformed_item.pop(key))
         _transformed_item['facilitators'] = ', '.join(filter(None, name_list))
         _transformed_item['facilitator_array'] = filter(None, name_detail_list)
-        
+
         # remove invalid pathway labels that were used for GitHub workflow
         pathway_skip_keywords = ['accepted','consideration','stipend','sample']
         pathway_list = _transformed_item['tags'].split(',')
