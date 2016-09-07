@@ -26,7 +26,7 @@ Follow these instructions to create *a service account*: https://developers.goog
     
 Creating a service account will generate a special client email address and
 a new private key. The client email address should be stored in an environment 
-variable called [`GOOGLE_API_CLIENT_EMAIL`](https://github.com/mozilla/schedule-app-data-processor/blob/master/docs/REQUIREMENTS.md#environment-variables). The private key should be stored in an environment variable called [`GOOGLE_API_PRIVATE_KEY`](https://github.com/mozilla/schedule-app-data-processor/blob/master/docs/REQUIREMENTS.md#environment-variables).
+variable called [`GOOGLE_API_CLIENT_EMAIL`](https://github.com/mozilla/mofo-allhands-event-app-data-processor/blob/master/docs/REQUIREMENTS.md#environment-variables). The private key should be stored in an environment variable called [`GOOGLE_API_PRIVATE_KEY`](https://github.com/mozilla/mofo-allhands-event-app-data-processor/blob/master/docs/REQUIREMENTS.md#environment-variables).
 
 Share the spreadsheet as "View Only" with the service account that you created (The email used as `GOOGLE_API_CLIENT_EMAIL`).
 
@@ -35,7 +35,7 @@ Share the spreadsheet as "View Only" with the service account that you created (
 ### Environment variables
 
 These are the values that should NOT be committed to the repo. You can start by 
-copying [sample.env](https://github.com/mozilla/schedule-app-data-processor/blob/master/sample.env): `cp sample.env .env` and updating the values in the `.env` file.
+copying [sample.env](https://github.com/mozilla/mofo-allhands-event-app-data-processor/blob/master/sample.env): `cp sample.env .env` and updating the values in the `.env` file.
     
 | variable name | description |
 |-----|-----|
@@ -43,9 +43,9 @@ copying [sample.env](https://github.com/mozilla/schedule-app-data-processor/blob
 | **`REPO_NAME`**                 | A string representing the name of the repository to commit to |
 | **`TARGET_DIR`**                | Name of the directory you are committing `sessions.json` file to. Leave blank or omit this variable if `sessions.json` is going to live on root directory. |
 | **`TARGET_BRANCHES`**           | a list(in comma-separated format) representing the branch(es) of the repository you want to commit to, e.g. `'gh-pages'` or `'gh-pages, master'`. Default value is `gh-pages` if this `TARGET_BRANCHES` is not set. |
-| **`GITHUB_TOKEN`**              | Your GitHub token. See [authentication docs](https://github.com/mozilla/schedule-app-data-processor/blob/master/docs/REQUIREMENTS.md#authentication) on how to acquire a GitHub token. |
-| **`GOOGLE_API_CLIENT_EMAIL`**   | Your Google API client email. See [authentication docs](https://github.com/mozilla/schedule-app-data-processor/blob/master/docs/REQUIREMENTS.md#authentication) on how to create a Google service account. |
-| **`GOOGLE_API_PRIVATE_KEY`**    | Your Google API private key. See [authentication docs](https://github.com/mozilla/schedule-app-data-processor/blob/master/docs/REQUIREMENTS.md#authentication) on how to create a Google service account. |
+| **`GITHUB_TOKEN`**              | Your GitHub token. See [authentication docs](https://github.com/mozilla/mofo-allhands-event-app-data-processor/blob/master/docs/REQUIREMENTS.md#authentication) on how to acquire a GitHub token. |
+| **`GOOGLE_API_CLIENT_EMAIL`**   | Your Google API client email. See [authentication docs](https://github.com/mozilla/mofo-allhands-event-app-data-processor/blob/master/docs/REQUIREMENTS.md#authentication) on how to create a Google service account. |
+| **`GOOGLE_API_PRIVATE_KEY`**    | Your Google API private key. See [authentication docs](https://github.com/mozilla/mofo-allhands-event-app-data-processor/blob/master/docs/REQUIREMENTS.md#authentication) on how to create a Google service account. |
 | **`GOOGLE_SPREADSHEET_KEY`**    | A string representing the unique ID of the Google spreadsheet storing your data. |
 | **`SESSIONS_WORKSHEETS_TO_FETCH`**       | if `FETCH_MULTIPLE_WORKSHEETS` is set to `True`, you may define a list of worksheet names(in comma-separated format) to fetch sessions data from. e.g. `'sheet1, sheet2, sheet3'` |
 | **`FETCH_MULTIPLE_WORKSHEETS`** | set to `True` if `GOOGLE_SPREADSHEET_KEY` points to a document with data in multiple worksheets. The import will retrieve data from all worksheets and compile into a single JSON file. _NOTE:_ The import will not perform any validation or normalization on column names, so if worksheets have varying column names, the resulting JSON objects will have varied key names as well. |

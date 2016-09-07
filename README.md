@@ -16,5 +16,5 @@ This Schedule App Data Processor script handles the following tasks
 [create a Python virtual environment docs](https://github.com/mozilla/mofo-allhands-event-app-data-processor/blob/master/docs/REQUIREMENTS.md#create-a-python-virtual-environment) for instructions.
 2. Get API creds from GitHub and Google. See [authentication docs](https://github.com/mozilla/mofo-allhands-event-app-data-processor/blob/master/docs/REQUIREMENTS.md#authentication) for instructions.
 3. Share your Google Spreadsheet with the Google Service Account that you created in Step 2.
-4. Set values for [environment variables]https://github.com/mozilla/mofo-allhands-event-app-data-processor/blob/master/docs/REQUIREMENTS.md#environment-variables) and run `source your-file-name.env`
+4. Set values for [environment variables](https://github.com/mozilla/mofo-allhands-event-app-data-processor/blob/master/docs/REQUIREMENTS.md#environment-variables) and run `source your-file-name.env`
 5. Running `update_schedule()` will execute [these methods](https://github.com/mozilla/mofo-allhands-event-app-data-processor/blob/master/docs/REQUIREMENTS.md#primary-methods-of-the-script) in succession. You can trigger it from the command line: **`python update_schedule.py`**
